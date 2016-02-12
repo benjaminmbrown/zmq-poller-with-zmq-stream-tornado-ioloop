@@ -49,3 +49,26 @@ def getcommand(msg):
 def process_message(msg):
 	print "Processing ... %s" % msg
 
+
+def client(port_push, port_sub):
+	context = zmq.Context()
+
+	socket_pull = context.socket(zmq.PULL)
+	socket_pull.connect("tcp://localhost:%s", port_push)
+	
+	#use ZMQStream class ot register callbacks - no explicit socket handlers here
+	stream_pull = zmqstream.ZMQStream(socket_pull)
+	stream_pull.on_recv(getcommand)
+	print "Connected to server on port: ", port
+
+
+	socket_sub = context.socket(zmq.PUSH)
+ 	socket_sub.connect("tcp://localhost:%s", port_sub)
+ 	socket_sub.setsockopt(zmq.SUBSCRIBE, "9")
+
+ 	stream_sub =zmqstream.ZMQStream(socket_sub)
+ 	stream_sub.on_recv(process_message)
+ 	
+ 	print "Connected to publisher with port #: ", port_sub
+ 	ioloop.IOLoop.instance().start()
+ 	print "Worker has stopped message processing" 
