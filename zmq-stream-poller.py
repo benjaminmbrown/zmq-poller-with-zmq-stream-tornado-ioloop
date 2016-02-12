@@ -39,4 +39,13 @@ def pub_server(port="5558"):
 		socket.send("%d %s" % (topic, messagedata)
 		time.sleep(1)
 
+def getcommand(msg):
+	print "received control command : %s" % msg
+	if msg[0] == "Exit":
+		print "Recevied exit command, client now stopping receiving"
+		should_continue = false
+		ioloop.IOLoop.instance().stop()
+
+def process_message(msg):
+	print "Processing ... %s" % msg
 
